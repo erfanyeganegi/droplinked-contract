@@ -1,0 +1,33 @@
+[project]
+name = 'droplinked-contract'
+authors = ["erfan yeganegi <yeganegierfan@gmail.com>"]
+cache_dir = './.cache'
+requirements = []
+
+[contracts.droplinked]
+path = './contracts/droplinked.clar'
+clarity_version = 1
+epoch = 2.0
+
+[contracts.ft-trait]
+path = './contracts/traits/ft-trait.clar'
+clarity_version = 1
+epoch = 2.0
+
+[contracts.nft-trait]
+path = './contracts/traits/nft-trait.clar'
+clarity_version = 1
+epoch = 2.0
+
+[contracts.sft-trait]
+path = './contracts/traits/sft-trait.clar'
+clarity_version = 1
+epoch = 2.0
+[repl.analysis]
+passes = ['check_checker']
+
+[repl.analysis.check_checker]
+strict = false
+trusted_sender = true
+trusted_caller = true
+callee_filter = true
