@@ -14,8 +14,9 @@
 ;; constants
 (define-constant err-producer-only (err u100))
 (define-constant err-publisher-only (err u101))
-(define-constant err-publisher-producer-selfsame (err u102))
-(define-constant err-unauthorized (err u103))
+(define-constant err-creator-only (err u102))
+(define-constant err-publisher-producer-selfsame (err u103))
+(define-constant err-unauthorized (err u104))
 
 (define-constant err-publisher-chain-invalid (err u600))
 
@@ -31,6 +32,7 @@
 (define-constant err-invalid-commission (err u902))
 (define-constant err-invalid-uri (err u902))
 (define-constant err-invalid-amount (err u903))
+(define-constant err-invalid-product-id (err u904))
 
 (define-constant request-status-pending u0)
 (define-constant request-status-accepted u1)
@@ -86,6 +88,7 @@
 (define-map uris uint (string-ascii 256))
 
 ;; public functions
+
 (define-public
   (transfer
     (product-id uint)
@@ -131,8 +134,8 @@
 )
 
 (define-public
-  (add-product
-    (price uint)
+  (create-product
+    (price uint) 
     (supply uint)
     (commission uint)
     (uri (string-ascii 256))
@@ -146,10 +149,10 @@
     (asserts! (> (len uri) u0) err-invalid-uri)
     (try! (nft-mint? sku product-id (as-contract tx-sender)))
     (try! (ft-mint? product supply (as-contract tx-sender)))
-    (map-insert uris product-id uri)
-    (map-insert supplies product-id supply)
     (map-insert holdings { product-id: product-id, owner: producer } supply)
+    (map-insert supplies product-id supply)
     (map-insert prices product-id price)
+    (map-insert uris product-id uri)
     (map-insert commissions { product-id: product-id, publisher: producer } commission)
     (map-insert publishers-chain
       { product-id: product-id, publisher: producer }
@@ -161,6 +164,14 @@
         token-id: product-id,
         amount: supply,
         recipient: producer
+      }
+    )
+    (print 
+      {
+        function: "create-product",
+        product-id: product-id,
+        supply: supply,
+        producer: producer
       }
     )
     (var-set product-id-head product-id)
